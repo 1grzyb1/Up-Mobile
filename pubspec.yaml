@@ -21,11 +21,14 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  qr_flutter: ^3.1.0
+  percent_indicator: ^2.1.1
   receive_sharing_intent: ^1.4.0+2
   share: ^0.6.4
   fluttertoast: ^4.0.1
   flutter_uploader: ^1.2.0
   file_picker: ^1.7.1
+  shared_preferences: 0.5.7+3
   flutter:
     sdk: flutter
 
