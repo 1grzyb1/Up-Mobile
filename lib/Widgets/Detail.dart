@@ -59,85 +59,87 @@ class Detail extends StatelessWidget {
                       foregroundColor: green,
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(10, 20, 0, 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 45,
-                          width: 45,
-                          child: Icon(
-                            Icons.insert_drive_file,
-                            color: primaryTwo,
-                            size: 45,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 10,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Text(
-                                  item.fileName,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                  child: Text(
-                                    item.link,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                  SafeArea(
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(10, 20, 0, 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 45,
+                            width: 45,
+                            child: Icon(
+                              Icons.insert_drive_file,
+                              color: primaryTwo,
+                              size: 45,
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                          child: SizedBox(
-                            height: 45,
-                            width: 4,
-                            child: Center(
-                              child: Opacity(
-                                opacity: 0.5,
-                                child: Container(
-                                  margin: EdgeInsets.fromLTRB(0, 2, 0, 2),
-                                  width: 4,
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      left: BorderSide(
-                                          color: Color(0xff2E4C6D), width: 2),
+                          Expanded(
+                            flex: 10,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Text(
+                                    item.fileName,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    child: Text(
+                                      item.link,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            child: SizedBox(
+                              height: 45,
+                              width: 4,
+                              child: Center(
+                                child: Opacity(
+                                  opacity: 0.5,
+                                  child: Container(
+                                    margin: EdgeInsets.fromLTRB(0, 2, 0, 2),
+                                    width: 4,
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        left: BorderSide(
+                                            color: Color(0xff2E4C6D), width: 2),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: GestureDetector(
-                            onTap: shareLink,
-                            child: Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                child: Icon(
-                                  Icons.share,
-                                  color: Colors.white,
-                                )),
-                          ),
-                        )
-                      ],
+                          Expanded(
+                            flex: 3,
+                            child: GestureDetector(
+                              onTap: shareLink,
+                              child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  child: Icon(
+                                    Icons.share,
+                                    color: Colors.white,
+                                  )),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   )
                 ],

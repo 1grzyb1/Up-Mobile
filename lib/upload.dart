@@ -27,16 +27,15 @@ class UploadPage extends State<MyHomePage> {
   String key;
   String link;
   List<ListItem> historyItems = new List<ListItem>();
-  final url = "http://192.168.1.20:8090/";
-
+  SharedPreferences prefs;
+  final url = "http://192.168.1.22:8090/";
   final uploader = FlutterUploader();
 
-  SharedPreferences prefs;
-
-  /// Receive file from other apps
+  /// Initialize app
   @override
   void initState() {
     super.initState();
+    // Init history
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       prefs = sp;
       setState(() {
@@ -47,10 +46,20 @@ class UploadPage extends State<MyHomePage> {
         });
       });
     });
+    // clean of outdated files
+    new Timer.periodic(
+        Duration(seconds: 1),
+        (Timer t) => setState(() {
+              if (historyItems.first.endMilisecond <=
+                  DateTime.now().millisecondsSinceEpoch)
+                historyItems.removeAt(0);
+            }));
+    // recive file from other apps
     ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
       setState(() {
         file = new File(value[0].path);
         selectedFile = path.basename(file.path);
+        uploadFile(file);
       });
     });
   }
@@ -71,7 +80,6 @@ class UploadPage extends State<MyHomePage> {
         ),
         body: Center(
           child: Container(
-            margin: EdgeInsets.fromLTRB(20, 30, 20, 30),
             child: Column(
               children: <Widget>[
                 Padding(
@@ -116,7 +124,8 @@ class UploadPage extends State<MyHomePage> {
                   child: ListView.builder(
                       itemCount: historyItems.length,
                       itemBuilder: (BuildContext context, int i) {
-                        return GestureDetector(
+                        return InkWell(
+                            focusColor: primaryTwo,
                             onTap: () => showShare(historyItems[i]),
                             child: HistoryItem(listItem: historyItems[i]));
                       }),
@@ -175,13 +184,6 @@ class UploadPage extends State<MyHomePage> {
           ListItem historyItem = new ListItem(selectedFile,
               DateTime.now().millisecondsSinceEpoch, json["toDelete"], link);
           historyItems.add(historyItem);
-          new Timer.periodic(
-              Duration(seconds: 1),
-              (Timer t) => setState(() {
-                    if (historyItems.first.endMilisecond <=
-                        DateTime.now().millisecondsSinceEpoch)
-                      historyItems.removeAt(0);
-                  }));
         }
         selectedFile = null;
         SharedPreferences prefs = await SharedPreferences.getInstance();
