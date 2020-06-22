@@ -27,6 +27,12 @@ class HistoryItem extends StatelessWidget {
 
   HistoryItem({@required this.listItem});
 
+  String get _name{
+    if(listItem.fileName == null) return "";
+    if(listItem.fileName.length < 20) return listItem.fileName;
+    return listItem.fileName.substring(0, 19)+"...";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -53,7 +59,7 @@ class HistoryItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      listItem.fileName,
+                      _name,
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,

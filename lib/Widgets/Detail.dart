@@ -12,6 +12,12 @@ class Detail extends StatelessWidget {
 
   ListItem item;
 
+  String get _name{
+    if(item.fileName == null) return "";
+    if(item.fileName.length < 20) return item.fileName;
+    return item.fileName.substring(0, 19)+"...";
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -84,7 +90,7 @@ class Detail extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
                                   Text(
-                                    item.fileName,
+                                    _name,
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 14,

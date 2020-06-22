@@ -12,6 +12,11 @@ class UploadItem extends StatelessWidget {
     if(progress == null) return 0;
     return (progress*100).roundToDouble();
   }
+  String get _name{
+    if(fileName == null) return "";
+    if(fileName.length < 20) return fileName;
+    return fileName.substring(0, 19)+"...";
+  }
   bool get isVisible {
     return fileName != null;
   }
@@ -57,7 +62,7 @@ class UploadItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      "$fileName",
+                      "$_name",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
