@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share/share.dart';
 import 'package:upflutter/Model/ListItem.dart';
@@ -12,10 +14,10 @@ class Detail extends StatelessWidget {
 
   ListItem item;
 
-  String get _name{
-    if(item.fileName == null) return "";
-    if(item.fileName.length < 20) return item.fileName;
-    return item.fileName.substring(0, 19)+"...";
+  String get _name {
+    if (item.fileName == null) return "";
+    if (item.fileName.length < 30) return item.fileName;
+    return item.fileName.substring(0, 29) + "...";
   }
 
   @override
@@ -37,124 +39,202 @@ class Detail extends StatelessWidget {
               ),
             ],
           ),
-          child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 10,
-                    width: 35,
-                    child: Center(
-                      child: Container(
-                        margin: EdgeInsets.fromLTRB(0, 2, 0, 2),
-                        width: 35,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: new BorderRadius.all(Radius.circular(10)),
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: Icon(
+                          Icons.insert_drive_file,
+                          color: primaryTwo,
+                          size: 20,
                         ),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Text(
+                          _name,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 40),
-                    child: QrImage(
-                      data: item.link,
-                      gapless: true,
-                      version: QrVersions.auto,
-                      size: 250.0,
-                      foregroundColor: green,
-                    ),
-                  ),
-                  SafeArea(
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(10, 20, 0, 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                            height: 45,
-                            width: 45,
-                            child: Icon(
-                              Icons.insert_drive_file,
-                              color: primaryTwo,
-                              size: 45,
-                            ),
-                          ),
-                          Expanded(
-                            flex: 10,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                ),
+              ),
+              Divider(
+                color: primaryTwo,
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
+                child: InkWell(
+                  focusColor: primary,
+                  onTap: () => {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        // return object of type Dialog
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50.0)),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: primary,
+                                borderRadius:
+                                    new BorderRadius.all(Radius.circular(10))),
+                            height: 350,
+                            child: Center(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
-                                  Text(
-                                    _name,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                    child: Text(
-                                      item.link,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: Colors.white,
-                                      ),
+                                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                    child: QrImage(
+                                      data: item.link,
+                                      gapless: true,
+                                      version: QrVersions.auto,
+                                      size: 250.0,
+                                      foregroundColor: green,
                                     ),
                                   ),
+                                  Divider(
+                                    color: primaryTwo,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                                    child: Center(
+                                      child: InkWell(
+                                        focusColor: primaryTwo,
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Icon(
+                                          Icons.close,
+                                          color: Colors.white,
+                                          size: 30,
+                                        ),
+                                      ),
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                            child: SizedBox(
-                              height: 45,
-                              width: 4,
-                              child: Center(
-                                child: Opacity(
-                                  opacity: 0.5,
-                                  child: Container(
-                                    margin: EdgeInsets.fromLTRB(0, 2, 0, 2),
-                                    width: 4,
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        left: BorderSide(
-                                            color: Color(0xff2E4C6D), width: 2),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: GestureDetector(
-                              onTap: shareLink,
-                              child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  child: Icon(
-                                    Icons.share,
-                                    color: Colors.white,
-                                  )),
-                            ),
-                          )
-                        ],
+                        );
+                      },
+                    )
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: Icon(
+                          Icons.crop_original,
+                          color: primaryTwo,
+                          size: 20,
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ))),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Text(
+                          "Generate qr code",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                focusColor: primary,
+                onTap: () => {Share.share(item.link)},
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: Icon(
+                          Icons.share,
+                          color: primaryTwo,
+                          size: 20,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Text(
+                          "Share link",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                focusColor: primary,
+                onTap: () => {
+                  Clipboard.setData(ClipboardData(text: item.link)),
+                  Fluttertoast.showToast(
+                      msg: "Link coppied",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey,
+                      textColor: Colors.white,
+                      fontSize: 16.0)
+                },
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: Icon(
+                          Icons.content_copy,
+                          color: primaryTwo,
+                          size: 20,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Text(
+                          "Copy to clipboard",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          )),
     );
   }
 
   /// Share link to other apps
-  void shareLink() {
-    Share.share(item.link);
-  }
+  void showQr(BuildContext context) {}
 }
