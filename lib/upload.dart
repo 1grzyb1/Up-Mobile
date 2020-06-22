@@ -18,7 +18,8 @@ import 'main.dart';
 
 class UploadPage extends State<MyHomePage> {
   final Color primary = Color(0xff456990);
-  final Color primaryTwo = Color(0xff434755);
+  final Color primaryDark = Color(0xff3c5c80);
+  final Color primaryTwo = Color(0xff3d546e);
   final Color green = Color(0xff49BEAA);
 
   File file;
@@ -67,8 +68,15 @@ class UploadPage extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("UP - file hosting",
+            style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold),),
+        backgroundColor: primaryDark,
+      ),
         floatingActionButton: Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 38, 38),
+          padding: EdgeInsets.fromLTRB(0, 0, 20, 20),
           child: FloatingActionButton(
             backgroundColor: primaryTwo,
             child: Icon(
@@ -82,26 +90,6 @@ class UploadPage extends State<MyHomePage> {
           child: Container(
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                  child: Text(
-                    "Up",
-                    style: TextStyle(
-                        fontSize: 30,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Opacity(
-                  opacity: 0.5,
-                  child: Divider(
-                    color: primaryTwo,
-                    thickness: 3,
-                    indent: 10,
-                    endIndent: 10,
-                    height: 50,
-                  ),
-                ),
                 UploadItem(
                   progress: progress,
                   fileName: selectedFile,
