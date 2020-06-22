@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -18,7 +19,9 @@ class HistoryItem extends StatelessWidget {
   String get timeLeft{
     if (listItem == null) return "";
     var current = new DateTime.now().millisecondsSinceEpoch;
-    return ((listItem.endMilisecond-current)/3600000).round().toString()+"h left";
+    double minutes = ((listItem.endMilisecond-current)/60000);
+    if(minutes > 60) return ((listItem.endMilisecond-current)/3600000).round().toString()+"h left";
+    return minutes.round().toString() + "min left";
   }
 
   Color backgroundColor = Color(0xff2E4C6D);
@@ -36,9 +39,9 @@ class HistoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.fromLTRB(10, 20, 0, 10),
+        margin: EdgeInsets.fromLTRB(20, 20, 20, 10),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             SizedBox(
               height: 45,
@@ -79,34 +82,32 @@ class HistoryItem extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-              flex: 3,
-              child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
-                        child: Text(
-                          timeLeft,
-                          style: TextStyle(color: Colors.white),
-                        ),
+            Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Text(
+                    timeLeft,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      child: LinearPercentIndicator(
+                        padding: EdgeInsets.all(0),
+                        width: 70,
+                        animation: true,
+                        lineHeight: 5.0,
+                        animationDuration: 0,
+                        percent: percentTime,
+                        linearStrokeCap: LinearStrokeCap.roundAll,
+                        backgroundColor: primaryTwo,
+                        progressColor: valueColor,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                        child: LinearPercentIndicator(
-                          width: 88,
-                          animation: true,
-                          lineHeight: 5.0,
-                          animationDuration: 0,
-                          percent: percentTime,
-                          linearStrokeCap: LinearStrokeCap.roundAll,
-                          backgroundColor: primaryTwo,
-                          progressColor: valueColor,
-                        ),
-                      ),
-                    ],
-              )),
+                    ),
+                  ),
+                ],
+              ),
             )
           ],
         ),
