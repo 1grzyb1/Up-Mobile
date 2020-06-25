@@ -29,8 +29,11 @@ class UploadPage extends State<MyHomePage> {
   String link;
   List<ListItem> historyItems = new List<ListItem>();
   SharedPreferences prefs;
-  final url = "http://192.168.1.22:8090/";
+  final url = "https://up.snet.ovh/";
   final uploader = FlutterUploader();
+  String get _fileName{
+    return file.path.split("/").last;
+  }
 
   /// Initialize app
   @override
@@ -51,7 +54,7 @@ class UploadPage extends State<MyHomePage> {
     new Timer.periodic(
         Duration(seconds: 1),
         (Timer t) => setState(() {
-              if (historyItems.first.endMilisecond <=
+              while (historyItems.first.endMilisecond <=
                   DateTime.now().millisecondsSinceEpoch)
                 historyItems.removeAt(0);
             }));
@@ -95,16 +98,19 @@ class UploadPage extends State<MyHomePage> {
                   fileName: selectedFile,
                   onCancel: cancel,
                 ),
-                Visibility(
-                  visible: historyItems.length == 0,
-                  child: Opacity(
-                    opacity: 0.4,
-                    child: Text(
-                      "NO ITEMS IN HISTORY",
-                      style: TextStyle(
-                          color: primaryTwo,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: Visibility(
+                    visible: historyItems.length == 0,
+                    child: Opacity(
+                      opacity: 0.4,
+                      child: Text(
+                        "NO ITEMS IN HISTORY",
+                        style: TextStyle(
+                            color: primaryTwo,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20),
+                      ),
                     ),
                   ),
                 ),
@@ -153,10 +159,11 @@ class UploadPage extends State<MyHomePage> {
         this.progress = progress.progress.toDouble() / 100;
       });
     });
+    String path = fileToUpload.path;
     await uploader.enqueue(
       url: url + "api/upload",
       files: [
-        FileItem(filename: "", savedDir: fileToUpload.path, fieldname: "file")
+        FileItem(filename: path.split("/").last, savedDir: path.substring(0, path.length-path.split("/").last.length), fieldname: "file")
       ],
       method: UploadMethod.POST,
       showNotification: true,
@@ -191,7 +198,7 @@ class UploadPage extends State<MyHomePage> {
 
   /// Cancel uploading
   void cancel() {
-    uploader.cancelAll();
     selectedFile = null;
+    uploader.cancelAll();
   }
 }

@@ -77,61 +77,7 @@ class Detail extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
                 child: InkWell(
                   focusColor: primary,
-                  onTap: () => {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        // return object of type Dialog
-                        return Dialog(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50.0)),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: primary,
-                                borderRadius:
-                                    new BorderRadius.all(Radius.circular(10))),
-                            height: 350,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                    child: QrImage(
-                                      data: item.link,
-                                      gapless: true,
-                                      version: QrVersions.auto,
-                                      size: 250.0,
-                                      foregroundColor: green,
-                                    ),
-                                  ),
-                                  Divider(
-                                    color: primaryTwo,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                                    child: Center(
-                                      child: InkWell(
-                                        focusColor: primaryTwo,
-                                        onTap: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Icon(
-                                          Icons.close,
-                                          color: Colors.white,
-                                          size: 30,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  },
+                  onTap: () => {showQr(context)},
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
@@ -236,5 +182,59 @@ class Detail extends StatelessWidget {
   }
 
   /// Share link to other apps
-  void showQr(BuildContext context) {}
+  void showQr(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return Dialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0)),
+          child: Container(
+            decoration: BoxDecoration(
+                color: primary,
+                borderRadius:
+                new BorderRadius.all(Radius.circular(10))),
+            height: 350,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    child: QrImage(
+                      data: item.link,
+                      gapless: true,
+                      version: QrVersions.auto,
+                      size: 250.0,
+                      foregroundColor: green,
+                    ),
+                  ),
+                  Divider(
+                    color: primaryTwo,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                    child: Center(
+                      child: InkWell(
+                        focusColor: primaryTwo,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
