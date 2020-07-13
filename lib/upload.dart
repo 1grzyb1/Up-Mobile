@@ -31,7 +31,9 @@ class UploadPage extends State<MyHomePage> {
   SharedPreferences prefs;
   final url = "https://up.snet.ovh/";
   final uploader = FlutterUploader();
-  String get _fileName{
+  StreamSubscription _intentDataStreamSubscription;
+
+  String get _fileName {
     return file.path.split("/").last;
   }
 
@@ -53,12 +55,24 @@ class UploadPage extends State<MyHomePage> {
     // clean of outdated files
     new Timer.periodic(
         Duration(seconds: 1),
-            (Timer t) => setState(() {
-          while (historyItems.first.endMilisecond <=
-              DateTime.now().millisecondsSinceEpoch)
-            historyItems.removeAt(0);
-        }));
-    // recive file from other apps
+        (Timer t) => setState(() {
+              while (historyItems.first.endMilisecond <=
+                  DateTime.now().millisecondsSinceEpoch)
+                historyItems.removeAt(0);
+            }));
+    // For sharing images coming from outside the app while the app is in the memory
+    _intentDataStreamSubscription =
+        ReceiveSharingIntent.getMediaStream().listen((List<SharedMediaFile> value) {
+          setState(() {
+            file = new File(value[0].path);
+            selectedFile = path.basename(file.path);
+            uploadFile(file);
+          });
+        }, onError: (err) {
+          print("getIntentDataStream error: $err");
+        });
+
+    // For sharing images coming from outside the app while the app is closed
     ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
       setState(() {
         file = new File(value[0].path);
@@ -69,13 +83,19 @@ class UploadPage extends State<MyHomePage> {
   }
 
   @override
+  void dispose() {
+    _intentDataStreamSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("UP - file hosting",
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold),),
+          title: Text(
+            "UP - file hosting",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
           backgroundColor: primaryDark,
         ),
         floatingActionButton: Padding(
@@ -93,23 +113,23 @@ class UploadPage extends State<MyHomePage> {
           slivers: <Widget>[
             SliverList(
               delegate: SliverChildListDelegate([
-              Visibility(
-                visible: selectedFile != null,
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(15, 10, 20, 10),
-                  child: UploadItem(
-                  progress: progress,
-                  fileName: selectedFile,
-                  onCancel: cancel,
+                Visibility(
+                  visible: selectedFile != null,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(15, 10, 20, 10),
+                    child: UploadItem(
+                      progress: progress,
+                      fileName: selectedFile,
+                      onCancel: cancel,
+                    ),
                   ),
                 ),
-              ),
-              Visibility(
-                visible: historyItems.length == 0,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                    child: Opacity(
+                Visibility(
+                  visible: historyItems.length == 0,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                      child: Opacity(
                         opacity: 0.4,
                         child: Text(
                           "NO ITEMS IN HISTORY",
@@ -119,21 +139,20 @@ class UploadPage extends State<MyHomePage> {
                               fontSize: 20),
                         ),
                       ),
+                    ),
                   ),
-                ),
-              )
+                )
               ]),
             ),
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                  (context, i) {
-                    return InkWell(
-                        focusColor: primaryTwo,
-                        onTap: () => showShare(historyItems[historyItems.length-i-1]),
-                        child: HistoryItem(listItem: historyItems[historyItems.length-i-1]));
-                  },
-                childCount: historyItems.length
-              ),
+              delegate: SliverChildBuilderDelegate((context, i) {
+                return InkWell(
+                    focusColor: primaryTwo,
+                    onTap: () =>
+                        showShare(historyItems[historyItems.length - i - 1]),
+                    child: HistoryItem(
+                        listItem: historyItems[historyItems.length - i - 1]));
+              }, childCount: historyItems.length),
             )
           ],
         ),
@@ -172,7 +191,11 @@ class UploadPage extends State<MyHomePage> {
     await uploader.enqueue(
       url: url + "api/upload",
       files: [
-        FileItem(filename: path.split("/").last, savedDir: path.substring(0, path.length-path.split("/").last.length), fieldname: "file")
+        FileItem(
+            filename: path.split("/").last,
+            savedDir:
+                path.substring(0, path.length - path.split("/").last.length),
+            fieldname: "file")
       ],
       method: UploadMethod.POST,
       showNotification: true,
@@ -207,7 +230,7 @@ class UploadPage extends State<MyHomePage> {
 
   /// Cancel uploading
   void cancel() {
-    selectedFile=null;
+    selectedFile = null;
     uploader.cancelAll();
   }
 }
