@@ -32,6 +32,7 @@ class UploadPage extends State<MyHomePage> {
   final url = "https://up.snet.ovh/";
   final uploader = FlutterUploader();
   StreamSubscription _intentDataStreamSubscription;
+  String _sharedText;
 
   String get _fileName {
     return file.path.split("/").last;
@@ -78,6 +79,23 @@ class UploadPage extends State<MyHomePage> {
         file = new File(value[0].path);
         selectedFile = path.basename(file.path);
         uploadFile(file);
+      });
+    });
+
+    // For sharing or opening urls/text coming from outside the app while the app is in the memory
+    _intentDataStreamSubscription =
+        ReceiveSharingIntent.getTextStream().listen((value) {
+          setState(() {
+            String _sharedText = value;
+          });
+        }, onError: (err) {
+          print("getLinkStream error: $err");
+        });
+
+    // For sharing or opening urls/text coming from outside the app while the app is closed
+    ReceiveSharingIntent.getInitialText().then((String value) {
+      setState(() {
+        String sharedText = value;
       });
     });
   }
