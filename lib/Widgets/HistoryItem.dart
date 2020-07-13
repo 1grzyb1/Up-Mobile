@@ -13,7 +13,9 @@ class HistoryItem extends StatelessWidget {
   double get percentTime {
     if (listItem == null) return 0;
     var current = new DateTime.now().millisecondsSinceEpoch;
-    return (listItem.endMilisecond-current)/(listItem.endMilisecond-listItem.startMilisecond);
+    double timeLeft=(listItem.endMilisecond-current)/(listItem.endMilisecond-listItem.startMilisecond);
+    if(timeLeft < 0) timeLeft=0;
+    return timeLeft;
   }
 
   String get timeLeft{

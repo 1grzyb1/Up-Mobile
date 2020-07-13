@@ -53,11 +53,11 @@ class UploadPage extends State<MyHomePage> {
     // clean of outdated files
     new Timer.periodic(
         Duration(seconds: 1),
-        (Timer t) => setState(() {
-              while (historyItems.first.endMilisecond <=
-                  DateTime.now().millisecondsSinceEpoch)
-                historyItems.removeAt(0);
-            }));
+            (Timer t) => setState(() {
+          while (historyItems.first.endMilisecond <=
+              DateTime.now().millisecondsSinceEpoch)
+            historyItems.removeAt(0);
+        }));
     // recive file from other apps
     ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
       setState(() {
@@ -71,13 +71,13 @@ class UploadPage extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("UP - file hosting",
+        appBar: AppBar(
+          title: Text("UP - file hosting",
             style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold),),
-        backgroundColor: primaryDark,
-      ),
+                color: Colors.white,
+                fontWeight: FontWeight.bold),),
+          backgroundColor: primaryDark,
+        ),
         floatingActionButton: Padding(
           padding: EdgeInsets.fromLTRB(0, 0, 20, 20),
           child: FloatingActionButton(
@@ -89,44 +89,53 @@ class UploadPage extends State<MyHomePage> {
             onPressed: selectFile,
           ),
         ),
-        body: Center(
-          child: Container(
-            child: Column(
-              children: <Widget>[
-                UploadItem(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverList(
+              delegate: SliverChildListDelegate([
+              Visibility(
+                visible: selectedFile != null,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(15, 10, 20, 10),
+                  child: UploadItem(
                   progress: progress,
                   fileName: selectedFile,
                   onCancel: cancel,
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                  child: Visibility(
-                    visible: historyItems.length == 0,
-                    child: Opacity(
-                      opacity: 0.4,
-                      child: Text(
-                        "NO ITEMS IN HISTORY",
-                        style: TextStyle(
-                            color: primaryTwo,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      ),
-                    ),
                   ),
                 ),
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: historyItems.length,
-                      itemBuilder: (BuildContext context, int i) {
-                        return InkWell(
-                            focusColor: primaryTwo,
-                            onTap: () => showShare(historyItems[historyItems.length-i-1]),
-                            child: HistoryItem(listItem: historyItems[historyItems.length-i-1]));
-                      }),
+              ),
+              Visibility(
+                visible: historyItems.length == 0,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    child: Opacity(
+                        opacity: 0.4,
+                        child: Text(
+                          "NO ITEMS IN HISTORY",
+                          style: TextStyle(
+                              color: primaryTwo,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
+                        ),
+                      ),
+                  ),
                 ),
-              ],
+              )
+              ]),
             ),
-          ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                  (context, i) {
+                    return InkWell(
+                        focusColor: primaryTwo,
+                        onTap: () => showShare(historyItems[historyItems.length-i-1]),
+                        child: HistoryItem(listItem: historyItems[historyItems.length-i-1]));
+                  },
+                childCount: historyItems.length
+              ),
+            )
+          ],
         ),
         backgroundColor: primary);
   }
