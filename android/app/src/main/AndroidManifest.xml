@@ -13,7 +13,7 @@
         android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:name="io.flutter.app.FlutterApplication"
-        android:label="upflutter"
+        android:label="UP File Hosting"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
