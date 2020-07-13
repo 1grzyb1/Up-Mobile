@@ -120,8 +120,8 @@ class UploadPage extends State<MyHomePage> {
                       itemBuilder: (BuildContext context, int i) {
                         return InkWell(
                             focusColor: primaryTwo,
-                            onTap: () => showShare(historyItems[i]),
-                            child: HistoryItem(listItem: historyItems[i]));
+                            onTap: () => showShare(historyItems[historyItems.length-i-1]),
+                            child: HistoryItem(listItem: historyItems[historyItems.length-i-1]));
                       }),
                 ),
               ],
@@ -198,7 +198,7 @@ class UploadPage extends State<MyHomePage> {
 
   /// Cancel uploading
   void cancel() {
-    selectedFile = null;
+    selectedFile=null;
     uploader.cancelAll();
   }
 }
