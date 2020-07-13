@@ -150,7 +150,7 @@ class UploadPage extends State<MyHomePage> {
                       child: Opacity(
                         opacity: 0.4,
                         child: Text(
-                          "NO ITEMS IN HISTORY",
+                          'Click "+" to upload file',
                           style: TextStyle(
                               color: primaryTwo,
                               fontWeight: FontWeight.bold,
