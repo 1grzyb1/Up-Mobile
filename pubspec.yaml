@@ -28,6 +28,9 @@ dependencies:
   fluttertoast: ^4.0.1
   flutter_uploader: ^1.2.0
   file_picker: ^1.7.1
+  path_provider: 1.6.11
+  file: 5.2.1
+  flutter_local_notifications: 1.4.4+2
   shared_preferences: 0.5.7+3
   flutter:
     sdk: flutter
