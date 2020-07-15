@@ -2,6 +2,7 @@ name: build-apk
 
 on:
   push:
+    branches: [master]
   pull_request:
 
 jobs:
