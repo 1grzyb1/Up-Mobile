@@ -1,9 +1,8 @@
 name: build-apk
 
 on:
-  push:
-    branches: [master]
-  pull_request:
+  - push
+  - pull_request
 
 jobs:
   build:
@@ -19,3 +18,9 @@ jobs:
           flutter-version: '1.17.5'
       - run: flutter pub get
       - run: flutter build apk
+        
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+         name: up.apk 
+         path: build/app/outputs/apk/app.apk
