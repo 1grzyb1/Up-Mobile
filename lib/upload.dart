@@ -299,6 +299,7 @@ class UploadPage extends State<MyHomePage> {
           backgroundColor: Colors.grey,
           textColor: Colors.white,
           fontSize: 16.0);
+      resultSubsription.cancel();
       return;
     });
   }
