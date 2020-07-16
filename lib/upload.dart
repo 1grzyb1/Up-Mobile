@@ -25,23 +25,26 @@ class UploadPage extends State<MyHomePage> {
   final Color primaryTwo = Color(0xff3d546e);
   final Color green = Color(0xff49BEAA);
 
-  File file;
-  String selectedFile;
+  File currentFile;
   double progress;
   String key;
   String link;
   List<ListItem> historyItems = new List<ListItem>();
+  List<File> queItems = new List<File>();
   SharedPreferences prefs;
   final url = "https://up.snet.ovh/";
   final uploader = FlutterUploader();
+  StreamSubscription resultSubsription;
   StreamSubscription _intentDataStreamSubscription;
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      new FlutterLocalNotificationsPlugin();
   var initializationSettingsAndroid;
   var initializationSettingsIOS;
   var initializationSettings;
 
   String get _fileName {
-    return file.path.split("/").last;
+    if(currentFile == null) return null;
+    return currentFile.path.split("/").last;
   }
 
   /// Initialize app
@@ -49,10 +52,13 @@ class UploadPage extends State<MyHomePage> {
   void initState() {
     super.initState();
     // Init notification settings
-    initializationSettingsAndroid = new AndroidInitializationSettings('app_icon');
-    initializationSettingsIOS = new IOSInitializationSettings( );
-    initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
+    initializationSettingsAndroid =
+        new AndroidInitializationSettings('app_icon');
+    initializationSettingsIOS = new IOSInitializationSettings();
+    initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
     // Init history
     SharedPreferences.getInstance().then((SharedPreferences sp) {
       prefs = sp;
@@ -73,52 +79,48 @@ class UploadPage extends State<MyHomePage> {
                 historyItems.removeAt(0);
             }));
     // For sharing images coming from outside the app while the app is in the memory
-    _intentDataStreamSubscription =
-        ReceiveSharingIntent.getMediaStream().listen((List<SharedMediaFile> value) {
-          setState(() {
-            file = new File(value[0].path);
-            selectedFile = path.basename(file.path);
-            uploadFile(file);
-          });
-        }, onError: (err) {
-          print("getIntentDataStream error: $err");
-        });
+    _intentDataStreamSubscription = ReceiveSharingIntent.getMediaStream()
+        .listen((List<SharedMediaFile> value) {
+      setState(() {
+        currentFile = new File(value[0].path);
+        uploadFile(currentFile);
+      });
+    }, onError: (err) {
+      print("getIntentDataStream error: $err");
+    });
 
     // For sharing images coming from outside the app while the app is closed
     ReceiveSharingIntent.getInitialMedia().then((List<SharedMediaFile> value) {
       setState(() {
-        file = new File(value[0].path);
-        selectedFile = path.basename(file.path);
-        uploadFile(file);
+        currentFile = new File(value[0].path);
+        uploadFile(currentFile);
       });
     });
 
     // For sharing or opening urls/text coming from outside the app while the app is in the memory
     _intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((value) {
-          setState(() async {
-            if(value == null) return;
-            Directory tempDir=await getTemporaryDirectory();
-            String tempPath = tempDir.path;
-            file = new File('$tempPath/file.txt');
-            file.writeAsString(value);
-            selectedFile="Clipboard paste";
-            uploadFile(file, delAfter: true);
-          });
-        }, onError: (err) {
-          print("getLinkStream error: $err");
-        });
+      setState(() async {
+        if (value == null) return;
+        Directory tempDir = await getTemporaryDirectory();
+        String tempPath = tempDir.path;
+        currentFile = new File('$tempPath/file.txt');
+        currentFile.writeAsString(value);
+        uploadFile(currentFile, delAfter: true);
+      });
+    }, onError: (err) {
+      print("getLinkStream error: $err");
+    });
 
     // For sharing or opening urls/text coming from outside the app while the app is closed
     ReceiveSharingIntent.getInitialText().then((String value) {
       setState(() async {
-        if(value == null) return;
-        Directory tempDir=await getTemporaryDirectory();
+        if (value == null) return;
+        Directory tempDir = await getTemporaryDirectory();
         String tempPath = tempDir.path;
-        file = new File('$tempPath/file.txt');
-        file.writeAsString(value);
-        selectedFile="Clipboard paste";
-        uploadFile(file, delAfter: true);
+        currentFile = new File('$tempPath/file.txt');
+        currentFile.writeAsString(value);
+        uploadFile(currentFile, delAfter: true);
       });
     });
   }
@@ -155,14 +157,11 @@ class UploadPage extends State<MyHomePage> {
             SliverList(
               delegate: SliverChildListDelegate([
                 Visibility(
-                  visible: selectedFile != null,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(15, 10, 20, 10),
-                    child: UploadItem(
-                      progress: progress,
-                      fileName: selectedFile,
-                      onCancel: cancel,
-                    ),
+                  visible: currentFile != null,
+                  child: UploadItem(
+                    progress: progress,
+                    fileName: _fileName,
+                    onCancel: cancel,
                   ),
                 ),
                 Visibility(
@@ -175,7 +174,7 @@ class UploadPage extends State<MyHomePage> {
                         child: Text(
                           'Click "+" to upload file',
                           style: TextStyle(
-                              color: primaryTwo,
+                              color: Color(0xff06203d),
                               fontWeight: FontWeight.bold,
                               fontSize: 20),
                         ),
@@ -184,6 +183,20 @@ class UploadPage extends State<MyHomePage> {
                   ),
                 )
               ]),
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, i) {
+                  return UploadItem(
+                    progress: 0,
+                    fileName: queItems[i].path.split("/").last,
+                    onCancel: () {
+                      queItems.removeAt(i);
+                    },
+                  );
+                },
+                childCount: queItems.length,
+              ),
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate((context, i) {
@@ -213,15 +226,34 @@ class UploadPage extends State<MyHomePage> {
 
   /// selecting file
   Future<void> selectFile() async {
-    file = await FilePicker.getFile();
+    File file = await FilePicker.getFile();
+    addFile(file);
+  }
+
+  /// Add file to waiting que
+  void addFile(File file) {
+    if (currentFile == null) {
+      currentFile=file;
+      uploadFile(file);
+      return;
+    }
+    queItems.add(file);
+  }
+
+  /// Upload next file in que
+  void uploadNext() {
+    resultSubsription.cancel();
+    if (queItems.length == 0) return;
     setState(() {
-      selectedFile = path.basename(file.path);
+      currentFile=queItems[0];
+      queItems.removeAt(0);
     });
-    uploadFile(file);
+    uploadFile(currentFile);
   }
 
   /// Upload file
-  Future<void> uploadFile(File fileToUpload, {bool delAfter=false}) async {
+  Future<void> uploadFile(File fileToUpload, {bool delAfter = false}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     // Listen to progress of upload
     uploader.progress.listen((progress) {
       setState(() {
@@ -243,22 +275,21 @@ class UploadPage extends State<MyHomePage> {
       tag: "upload",
     );
     // listen to result of upload
-    uploader.result.listen((result) {
-      setState(() async {
+    resultSubsription = uploader.result.listen((result) {
         Map<String, dynamic> json = jsonDecode(result.response);
         key = json["key"];
         link = url + "u/" + key;
-        if (selectedFile != null) {
-          ListItem historyItem = new ListItem(selectedFile,
+        if (currentFile != null) {
+          ListItem historyItem = new ListItem(_fileName,
               DateTime.now().millisecondsSinceEpoch, json["toDelete"], link);
           historyItems.add(historyItem);
         }
-        notification("Uploaded", selectedFile, link);
-        selectedFile = null;
-        SharedPreferences prefs = await SharedPreferences.getInstance();
+        notification("Uploaded", _fileName, link);
+        currentFile = null;
         prefs.setString("history", jsonEncode(historyItems));
-        if(delAfter) file.delete();
-      });
+        if (delAfter) currentFile.delete();
+        uploadNext();
+        return;
     }, onError: (ex, stacktrace) {
       Fluttertoast.showToast(
           msg: "Something went wrong :/",
@@ -268,16 +299,18 @@ class UploadPage extends State<MyHomePage> {
           backgroundColor: Colors.grey,
           textColor: Colors.white,
           fontSize: 16.0);
+      return;
     });
   }
 
   /// Cancel uploading
   void cancel() {
-    selectedFile = null;
+    currentFile = null;
     uploader.cancelAll();
   }
 
-  Future notification(String title, String body, String link) async{
+  /// Show notification
+  Future notification(String title, String body, String link) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
@@ -285,20 +318,14 @@ class UploadPage extends State<MyHomePage> {
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, title, body, platformChannelSpecifics,
-        payload: link,
+      0,
+      title,
+      body,
+      platformChannelSpecifics,
+      payload: link,
     );
   }
 
-  Future onSelectNotification(String payload) async {
-    Clipboard.setData(ClipboardData(text: payload));
-    Fluttertoast.showToast(
-    msg: "Link coppied",
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    timeInSecForIosWeb: 1,
-    backgroundColor: Colors.grey,
-    textColor: Colors.white,
-    fontSize: 16.0);
-  }
+  /// Handle notification response
+  Future onSelectNotification(String payload) async {}
 }

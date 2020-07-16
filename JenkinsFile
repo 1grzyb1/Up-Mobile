@@ -1,0 +1,6 @@
+ node('master') {
+    stage('Build') {
+        checkout scm
+        sh "./flutter build apk --split-per-abi"
+    }
+}
