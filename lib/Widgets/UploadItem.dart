@@ -9,7 +9,7 @@ class UploadItem extends StatelessWidget {
   String fileName;
   VoidCallback onCancel;
   double get percentProgress{
-    if(progress == null) return 0;
+    if((progress == null)||(progress < 0)) return 0;
     return (progress*100).roundToDouble();
   }
   String get _name{

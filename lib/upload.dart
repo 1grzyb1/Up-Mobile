@@ -74,6 +74,7 @@ class UploadPage extends State<MyHomePage> {
     new Timer.periodic(
         Duration(seconds: 1),
         (Timer t) => setState(() {
+          if(historyItems.length == 0) return;
               while (historyItems.first.endMilisecond <=
                   DateTime.now().millisecondsSinceEpoch)
                 historyItems.removeAt(0);
@@ -243,7 +244,7 @@ class UploadPage extends State<MyHomePage> {
   /// Upload next file in que
   void uploadNext() {
     resultSubsription.cancel();
-    if (queItems.length == 0) return;
+    if((queItems == null)||(queItems.length == 0)) return;
     setState(() {
       currentFile=queItems[0];
       queItems.removeAt(0);
@@ -292,7 +293,7 @@ class UploadPage extends State<MyHomePage> {
         return;
     }, onError: (ex, stacktrace) {
       Fluttertoast.showToast(
-          msg: "Something went wrong :/",
+          msg: ex.message,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 1,
