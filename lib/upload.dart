@@ -285,7 +285,7 @@ class UploadPage extends State<MyHomePage> {
               DateTime.now().millisecondsSinceEpoch, json["toDelete"], link);
           historyItems.add(historyItem);
         }
-        notification("Uploaded", _fileName, link);
+        notification("Uploaded", _fileName, historyItems.length-1);
         currentFile = null;
         prefs.setString("history", jsonEncode(historyItems));
         if (delAfter) currentFile.delete();
@@ -312,7 +312,7 @@ class UploadPage extends State<MyHomePage> {
   }
 
   /// Show notification
-  Future notification(String title, String body, String link) async {
+  Future notification(String title, String body, int index) async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
@@ -324,10 +324,12 @@ class UploadPage extends State<MyHomePage> {
       title,
       body,
       platformChannelSpecifics,
-      payload: link,
+      payload: index.toString(),
     );
   }
 
   /// Handle notification response
-  Future onSelectNotification(String payload) async {}
+  Future onSelectNotification(String payload) async {
+    showShare(historyItems[int.parse(payload)]);
+  }
 }
