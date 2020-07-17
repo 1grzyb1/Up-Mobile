@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share/share.dart';
 import 'package:upflutter/Model/ListItem.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Detail extends StatelessWidget {
   final Color primary = Color(0xff456990);
@@ -176,9 +177,56 @@ class Detail extends StatelessWidget {
                   ),
                 ),
               ),
+              InkWell(
+                focusColor: primary,
+                onTap: () => {launchURL(item.link)},
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: Icon(
+                          Icons.open_in_browser,
+                          color: primaryTwo,
+                          size: 20,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                        child: Text(
+                          "Open in browser",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           )),
     );
+  }
+
+  /// Open link in browser
+  launchURL(String link) async {
+    if (await canLaunch(link)) {
+      await launch(link);
+    } else {
+      Fluttertoast.showToast(
+          msg: "Couldn't open this link",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
   }
 
   /// Share link to other apps
