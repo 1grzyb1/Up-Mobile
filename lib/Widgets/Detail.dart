@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share/share.dart';
 import 'package:upflutter/Model/ListItem.dart';
+import 'package:upflutter/Widgets/itemIcon.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Detail extends StatelessWidget {
@@ -11,14 +14,19 @@ class Detail extends StatelessWidget {
   final Color primaryTwo = Color(0xff434755);
   final Color green = Color(0xff49BEAA);
 
-  Detail({@required this.item});
+  Detail({@required this.listItem});
 
-  ListItem item;
+  ListItem listItem;
 
   String get _name {
-    if (item.fileName == null) return "";
-    if (item.fileName.length < 30) return item.fileName;
-    return item.fileName.substring(0, 29) + "...";
+    if (listItem.fileName == null) return "";
+    if (listItem.fileName.length < 30) return listItem.fileName;
+    return listItem.fileName.substring(0, 29) + "...";
+  }
+
+  bool get isImage {
+    List<String> img = ["png", "jpg", "jpeg"];
+    return img.contains(listItem.fileName.split(".").last);
   }
 
   @override
@@ -48,15 +56,7 @@ class Detail extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: Icon(
-                          Icons.insert_drive_file,
-                          color: primaryTwo,
-                          size: 20,
-                        ),
-                      ),
+                      itemIcon(listItem, 30),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
                         child: Text(
@@ -107,7 +107,7 @@ class Detail extends StatelessWidget {
               ),
               InkWell(
                 focusColor: primary,
-                onTap: () => {Share.share(item.link)},
+                onTap: () => {Share.share(listItem.link)},
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
                   child: Row(
@@ -139,7 +139,7 @@ class Detail extends StatelessWidget {
               InkWell(
                 focusColor: primary,
                 onTap: () => {
-                  Clipboard.setData(ClipboardData(text: item.link)),
+                  Clipboard.setData(ClipboardData(text: listItem.link)),
                   Fluttertoast.showToast(
                       msg: "Link coppied",
                       toastLength: Toast.LENGTH_SHORT,
@@ -179,7 +179,7 @@ class Detail extends StatelessWidget {
               ),
               InkWell(
                 focusColor: primary,
-                onTap: () => {launchURL(item.link)},
+                onTap: () => {launchURL(listItem.link)},
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 10, 10),
                   child: Row(
@@ -251,7 +251,7 @@ class Detail extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                     child: QrImage(
-                      data: item.link,
+                      data: listItem.link,
                       gapless: true,
                       version: QrVersions.auto,
                       size: 250.0,

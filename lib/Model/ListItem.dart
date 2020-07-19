@@ -1,15 +1,17 @@
 import 'dart:core';
 
 class ListItem{
+  String filePath;
   String fileName;
   String link;
   int startMilisecond;
   int endMilisecond;
 
-  ListItem(this.fileName, this.startMilisecond, this.endMilisecond, this.link);
+  ListItem(this.filePath, this.fileName, this.startMilisecond, this.endMilisecond, this.link);
 
   factory ListItem.fromJson(Map<String, dynamic> json){
     ListItem item = ListItem(
+      json['filePath'],
       json['fileName'],
       json['startMilisecond'],
       json['endMilisecond'],
@@ -21,6 +23,7 @@ class ListItem{
 
   Map<String, dynamic> toJson(){
     return {
+      'filePath' : filePath,
       'fileName' : fileName,
       'link' : link,
       'startMilisecond' : startMilisecond,

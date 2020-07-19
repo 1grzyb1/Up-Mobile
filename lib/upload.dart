@@ -12,6 +12,7 @@ import 'package:flutter_uploader/flutter_uploader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:upflutter/Colors/upColors.dart';
 import 'package:upflutter/Model/ListItem.dart';
 import 'package:upflutter/Widgets/HistoryItem.dart';
 import 'package:upflutter/Widgets/UploadItem.dart';
@@ -20,11 +21,6 @@ import 'Widgets/Detail.dart';
 import 'main.dart';
 
 class UploadPage extends State<MyHomePage> {
-  final Color primary = Color(0xff456990);
-  final Color primaryDark = Color(0xff3c5c80);
-  final Color primaryTwo = Color(0xff3d546e);
-  final Color green = Color(0xff49BEAA);
-
   File currentFile;
   double progress;
   String key;
@@ -140,15 +136,15 @@ class UploadPage extends State<MyHomePage> {
             "UP - file hosting",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          backgroundColor: primaryDark,
+          backgroundColor: upColors.primaryDark,
         ),
         floatingActionButton: Padding(
           padding: EdgeInsets.fromLTRB(0, 0, 20, 20),
           child: FloatingActionButton(
-            backgroundColor: primaryTwo,
+            backgroundColor: upColors.primaryTwo,
             child: Icon(
               Icons.add,
-              color: green,
+              color: upColors.green,
             ),
             onPressed: selectFile,
           ),
@@ -202,7 +198,7 @@ class UploadPage extends State<MyHomePage> {
             SliverList(
               delegate: SliverChildBuilderDelegate((context, i) {
                 return InkWell(
-                    focusColor: primaryTwo,
+                    focusColor: upColors.primaryTwo,
                     onTap: () =>
                         showShare(historyItems[historyItems.length - i - 1]),
                     child: HistoryItem(
@@ -211,7 +207,7 @@ class UploadPage extends State<MyHomePage> {
             )
           ],
         ),
-        backgroundColor: primary);
+        backgroundColor: upColors.primary);
   }
 
   void showShare(ListItem item) {
@@ -220,7 +216,7 @@ class UploadPage extends State<MyHomePage> {
         context: context,
         builder: (BuildContext context) {
           return Detail(
-            item: item,
+            listItem: item,
           );
         });
   }
@@ -281,7 +277,7 @@ class UploadPage extends State<MyHomePage> {
         key = json["key"];
         link = url + "u/" + key;
         if (currentFile != null) {
-          ListItem historyItem = new ListItem(_fileName,
+          ListItem historyItem = new ListItem(currentFile.path, _fileName,
               DateTime.now().millisecondsSinceEpoch, json["toDelete"], link);
           historyItems.add(historyItem);
         }
