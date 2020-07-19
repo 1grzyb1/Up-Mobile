@@ -31,11 +31,6 @@ class HistoryItem extends StatelessWidget {
     return minutes.round().toString() + "min left";
   }
 
-  bool get isImage {
-    List<String> img = ["png", "jpg", "jpeg"];
-    return img.contains(listItem.fileName.split(".").last);
-  }
-
   Color backgroundColor = Color(0xff2E4C6D);
   Color valueColor = Color(0xff49DCB1);
   final Color primaryTwo = Color(0xff434755);

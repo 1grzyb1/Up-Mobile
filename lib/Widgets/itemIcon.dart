@@ -49,6 +49,11 @@ class itemIcon extends StatelessWidget {
         fit: BoxFit.cover,
       );
     }
+    return Image.asset(
+      "file.png",
+      height: height,
+      fit: BoxFit.cover,
+    );
   }
 
   itemIcon(this.listItem, this.height);
